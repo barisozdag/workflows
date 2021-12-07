@@ -96,7 +96,7 @@ jobs:
       - name: ℹ️ Compose release flag
         id: release
         run: |
-          from=$(yq --no-colors eval ".release" "${{ needs.information.outputs.build }}")
+          release=$(yq --no-colors eval ".args.release" "${{ needs.information.outputs.build }}")
           echo "::set-output name=release::${release}"
       - name: ℹ️ Compose build flags
         id: flags
