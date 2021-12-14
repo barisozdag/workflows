@@ -12,7 +12,7 @@ on:
     - cron: "34 5 * * *"
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      ADDON_TOKEN:
         required: true
   workflow_dispatch:
 
@@ -29,6 +29,6 @@ jobs:
       - name: 🚀 Run Label Syncer
         uses: micnncim/action-label-syncer@v1.3.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADDON_TOKEN }}
         with:
           manifest: labels.yml

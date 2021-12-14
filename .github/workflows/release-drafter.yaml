@@ -5,7 +5,7 @@ name: Release Drafter
 on:
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      ADDON_TOKEN:
         required: true
 
 jobs:
@@ -16,4 +16,4 @@ jobs:
       - name: 🚀 Run Release Drafter
         uses: release-drafter/release-drafter@v5.15.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADDON_TOKEN }}

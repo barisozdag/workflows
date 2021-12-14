@@ -5,7 +5,7 @@ name: Repository Updater
 on:
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      ADDON_TOKEN:
         required: true
       UPDATER_TOKEN:
         required: true
@@ -20,7 +20,7 @@ jobs:
         with:
           continue-after-seconds: 1200
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADDON_TOKEN }}
       - name: 🚀 Run Repository Updater
         uses: hassio-addons/repository-updater@v1.2.2
         with:

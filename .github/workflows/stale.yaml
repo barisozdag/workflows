@@ -7,7 +7,7 @@ on:
     - cron: "0 8 * * *"
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      ADDON_TOKEN:
         required: true
   workflow_dispatch:
 
@@ -19,7 +19,7 @@ jobs:
       - name: 🚀 Run stale
         uses: actions/stale@v4
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.ADDON_TOKEN }}
           days-before-stale: 30
           days-before-close: 7
           remove-stale-when-updated: true

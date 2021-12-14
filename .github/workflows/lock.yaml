@@ -7,7 +7,7 @@ on:
     - cron: "0 9 * * *"
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      ADDON_TOKEN:
         required: true
   workflow_dispatch:
 
@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: dessant/lock-threads@v3.0.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.ADDON_TOKEN }}
           issue-inactive-days: "30"
           issue-lock-reason: ""
           pr-inactive-days: "1"
