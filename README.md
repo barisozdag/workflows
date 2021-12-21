@@ -47,7 +47,5 @@ SOFTWARE.
 [frenck]: https://github.com/frenck
 [github-actions-shield]: https://github.com/barisozdag/workflows/actions/workflows/workflows-ci.yaml/badge.svg
 [github-actions]: https://github.com/barisozdag/workflows/actions/workflows/workflows-ci.yaml
-[issue]: https://github.com/barisozdag/workflows/issues
 [license-shield]: https://img.shields.io/github/license/barisozdag/workflows.svg
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2021.svg
-[repository]: https://github.com/barisozdag/repository
