@@ -6,6 +6,9 @@ on:
   schedule:
     - cron: "0 8 * * *"
   workflow_call:
+    secrets:
+      ADDON_TOKEN:
+        required: true
   workflow_dispatch:
 
 jobs:
@@ -16,7 +19,7 @@ jobs:
       - name: 🚀 Run stale
         uses: actions/stale@v6
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.ADDON_TOKEN }}
           days-before-stale: 30
           days-before-close: 7
           remove-stale-when-updated: true

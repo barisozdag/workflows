@@ -9,6 +9,9 @@ on:
         description: Overrides the detected slug
         required: false
         type: string
+    secrets:
+      ADDON_TOKEN:
+        required: true
 
 jobs:
   information:
@@ -27,7 +30,7 @@ jobs:
         uses: actions/checkout@v3
       - name: 🚀 Run add-on information action
         id: information
-        uses: frenck/action-addon-information@v1.4.0
+        uses: frenck/action-addon-information@v1.4
       - name: 🚀 Process possible slug override
         id: override
         run: |
@@ -46,7 +49,7 @@ jobs:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v3
       - name: 🚀 Run Add-on Lint
-        uses: frenck/action-addon-linter@v2.10.1
+        uses: frenck/action-addon-linter@v2.9
         with:
           community: true
           path: "./${{ needs.information.outputs.target }}"
@@ -115,7 +118,7 @@ jobs:
         with:
           prettier_options: --write **/*.{json,js,md,yaml}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADDON_TOKEN }}
 
   build:
     name: Build ${{ matrix.architecture }}
@@ -137,7 +140,7 @@ jobs:
         uses: actions/checkout@v3
       - name: 🏗 Set up build cache
         id: cache
-        uses: actions/cache@v3.0.11
+        uses: actions/cache@v3
         with:
           path: /tmp/.docker-cache
           key: docker-${{ matrix.architecture }}-${{ github.sha }}
@@ -176,10 +179,9 @@ jobs:
             exit 1
           fi
       - name: ⤵️ Download base image
-        if: steps.flags.outputs.from != 'null'
         run: docker pull "${{ steps.flags.outputs.from }}"
       - name: ✅ Verify authenticity of base image
-        if: steps.flags.outputs.from != 'null' && needs.information.outputs.base_image_signer != 'null'
+        if: needs.information.outputs.base_image_signer != 'null'
         run: |
           cas authenticate \
             --signerID "${{ needs.information.outputs.base_image_signer }}" \
@@ -192,7 +194,7 @@ jobs:
           file: ${{ needs.information.outputs.target }}/Dockerfile
           cache-from: |
             type=local,src=/tmp/.docker-cache
-            ghcr.io/${{ github.repository_owner }}/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:edge
+            ghcr.io/barisozdag/${{ needs.information.outputs.slug }}/${{ matrix.architecture }}:edge
           cache-to: type=local,mode=max,dest=/tmp/.docker-cache-new
           platforms: ${{ steps.flags.outputs.platform }}
           build-args: |

@@ -4,6 +4,9 @@ name: Release Drafter
 # yamllint disable-line rule:truthy
 on:
   workflow_call:
+    secrets:
+      ADDON_TOKEN:
+        required: true
 
 jobs:
   update_release_draft:
@@ -13,4 +16,4 @@ jobs:
       - name: 🚀 Run Release Drafter
         uses: release-drafter/release-drafter@v5.21.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADDON_TOKEN }}

@@ -10,6 +10,9 @@ on:
       - unlabeled
       - synchronize
   workflow_call:
+    secrets:
+      ADDON_TOKEN:
+        required: true
 
 jobs:
   pr_labels:
@@ -20,9 +23,8 @@ jobs:
         uses: jesusvasquez333/verify-pr-label-action@v1.4.0
         with:
           pull-request-number: "${{ github.event.pull_request.number }}"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          github-token: "${{ secrets.ADDON_TOKEN }}"
           valid-labels: >-
             breaking-change, bugfix, documentation, enhancement, refactor,
-            performance, new-feature, maintenance, ci, dependencies,
-            translations
+            performance, new-feature, maintenance, ci, dependencies
           disable-reviews: true
