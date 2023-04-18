@@ -22,7 +22,7 @@ The original setup of this repository is by [Franck Nijhof][frenck].
 
 MIT License
 
-Copyright (c) 2021 Franck Nijhof, 2021-2022 Barış Özdağ
+Copyright (c) 2021 Franck Nijhof, 2021-2023 Barış Özdağ
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -48,4 +48,4 @@ SOFTWARE.
 [github-actions-shield]: https://github.com/barisozdag/workflows/actions/workflows/workflows-ci.yaml/badge.svg
 [github-actions]: https://github.com/barisozdag/workflows/actions/workflows/workflows-ci.yaml
 [license-shield]: https://img.shields.io/github/license/barisozdag/workflows.svg
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2022.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2023.svg
