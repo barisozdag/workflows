@@ -1,12 +1,30 @@
 ---
 name: Deploy
 
+concurrency:
+  group: queue
+
 # yamllint disable-line rule:truthy
 on:
   workflow_call:
     inputs:
       slug:
         description: Overrides the detected slug
+        required: false
+        type: string
+      repository:
+        default: "repository"
+        description: The name of the stable repository
+        required: false
+        type: string
+      repository_edge:
+        default: "repository-edge"
+        description: The name of the edge repository
+        required: false
+        type: string
+      repository_beta:
+        default: "repository-beta"
+        description: The name of the beta repository
         required: false
         type: string
     secrets:
@@ -49,7 +67,7 @@ jobs:
           if [[ ! -z "${{ inputs.slug }}" ]]; then
             slug="${{ inputs.slug }}"
           fi
-          echo "::set-output name=slug::$slug"
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
       - name: ℹ️ Gather version and environment
         id: release
         run: |
@@ -66,8 +84,8 @@ jobs:
             fi
           fi
 
-          echo "::set-output name=environment::${environment}"
-          echo "::set-output name=version::${version}"
+          echo "environment=${environment}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
 
   deploy:
     name: 👷 Build & Deploy ${{ matrix.architecture }}
@@ -77,15 +95,11 @@ jobs:
       matrix:
         architecture: ${{ fromJson(needs.information.outputs.architectures) }}
     steps:
-      - name: 🔂 Wait for other runs to complete
-        uses: softprops/turnstyle@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v3
       - name: 🏗 Set up build cache
         id: cache
-        uses: actions/cache@v3.2.5
+        uses: actions/cache@v3.3.1
         with:
           path: /tmp/.docker-cache
           key: docker-${{ matrix.architecture }}-${{ github.sha }}
@@ -94,9 +108,11 @@ jobs:
       - name: 🏗 Set up QEMU
         uses: docker/setup-qemu-action@v2.1.0
       - name: 🏗 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2.4.1
+        uses: docker/setup-buildx-action@v2.5.0
       - name: 🏗 Set up Codenotary Community Attestation Service (CAS)
         uses: frenck/action-setup-cas@v0.1.1
+        with:
+          version: v1.0.3
       - name: ℹ️ Compose release flag
         id: release
         run: |
@@ -105,20 +121,20 @@ jobs:
       - name: ℹ️ Compose build flags
         id: flags
         run: |
-          echo "::set-output name=date::$(date +"%Y-%m-%dT%H:%M:%SZ")"
+          echo "date=$(date +"%Y-%m-%dT%H:%M:%SZ")" >> "$GITHUB_OUTPUT"
           from=$(yq --no-colors eval ".build_from.${{ matrix.architecture }}" "${{ needs.information.outputs.build }}")
-          echo "::set-output name=from::${from}"
+          echo "from=${from}" >> "$GITHUB_OUTPUT"
 
           if [[ "${{ matrix.architecture}}" = "amd64" ]]; then
-            echo "::set-output name=platform::linux/amd64"
+            echo "platform=linux/amd64" >> "$GITHUB_OUTPUT"
           elif [[ "${{ matrix.architecture }}" = "i386" ]]; then
-            echo "::set-output name=platform::linux/386"
+            echo "platform=linux/386" >> "$GITHUB_OUTPUT"
           elif [[ "${{ matrix.architecture }}" = "armhf" ]]; then
-            echo "::set-output name=platform::linux/arm/v6"
+            echo "platform=linux/arm/v6" >> "$GITHUB_OUTPUT"
           elif [[ "${{ matrix.architecture }}" = "armv7" ]]; then
-            echo "::set-output name=platform::linux/arm/v7"
+            echo "platform=linux/arm/v7" >> "$GITHUB_OUTPUT"
           elif [[ "${{ matrix.architecture }}" = "aarch64" ]]; then
-            echo "::set-output name=platform::linux/arm64/v8"
+            echo "platform=linux/arm64/v8" >> "$GITHUB_OUTPUT"
           else
             echo "::error ::Could not determine platform for architecture ${{ matrix.architecture }}"
             exit 1
@@ -208,7 +224,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v2.1.1
         with:
           token: ${{ secrets.DISPATCH_TOKEN }}
-          repository: ${{ github.repository_owner }}/haddons-repo-edge
+          repository: ${{ github.repository_owner }}/${{ inputs.repository_edge }}
           event-type: update
           client-payload: >
             {
@@ -234,7 +250,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v2.1.1
         with:
           token: ${{ secrets.DISPATCH_TOKEN }}
-          repository: ${{ github.repository_owner }}/haddons-repo-beta
+          repository: ${{ github.repository_owner }}/${{ inputs.repository_beta }}
           event-type: update
           client-payload: >
             {
@@ -258,7 +274,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v2.1.1
         with:
           token: ${{ secrets.DISPATCH_TOKEN }}
-          repository: ${{ github.repository_owner }}/haddons-repo
+          repository: ${{ github.repository_owner }}/${{ inputs.repository }}
           event-type: update
           client-payload: >
             {
