@@ -117,7 +117,7 @@ jobs:
         id: release
         run: |
           release=$(yq --no-colors eval ".args.release" "${{ needs.information.outputs.build }}")
-          echo "::set-output name=release::${release}"
+          echo "name=release::${release}" >> "$GITHUB_OUTPUT"
       - name: ℹ️ Compose build flags
         id: flags
         run: |
